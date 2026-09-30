@@ -5,23 +5,25 @@ import java.util.HashMap;
 
 public class InMemory implements UserRepository {
 
-    private HashMap<String, User> usuarios = new HashMap();
+    private HashMap<String, User> dados= new HashMap();
 
     @Override
     public boolean save(User user) {
-        usuarios.put(user.getLogin(), user);
+        dados.put(user.getLogin(), user);
         return true;
     }
 
     @Override
     public boolean update(User user) {
-        return false;
+        dados.replace(user.getLogin(), user);
+        return true;
     }
 
     @Override
     public User findByLogin(String login) {
-            return usuarios.get(login);
+        return dados.get(login);
     }
+
 
 
 }
