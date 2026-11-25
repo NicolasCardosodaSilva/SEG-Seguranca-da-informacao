@@ -1,17 +1,19 @@
 services:
   app-java:
     build: .
-    container_name: app-java
     ports:
-       - "8080:8080"
+      - "8080:8080"
+    depends_on:
+      - vault-server
     environment:
-      SPRING_CONFIG_IMPORT: "optional:configtree:/run/secrets/"
-    secrets:
-      - spring.security.oauth2.client.registration.github.client-id
-      - spring.security.oauth2.client.registration.github.client-name
-secrets:
-# O nome do segredo deve corresponder a propriedade do Spring Boot, com underline no lugar do ponto
-  spring.security.oauth2.client.registration.github.client-id:
-    file: ./github_id.txt
-  spring.security.oauth2.client.registration.github.client-name:
-    file: ./github_secret.txt
+# Salvo no arquivo .env
+      VAULT_SECRET_ID: ${VAULT_SECRET_ID}
+  vault-server:
+      image: hashicorp/vault:latest
+      ports:
+        - "127.0.0.1:8200:8200"
+      environment:
+        VAULT_DEV_ROOT_TOKEN_ID: "token-admin-dev-apenas"
+        VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+      cap_add:
+        - IPC_LOCK
